@@ -7,6 +7,8 @@ package gestiondebanque;
 
 
 import java.sql.* ;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.* ;
 /**
  *
@@ -21,6 +23,8 @@ ResultSet rs =  null ;
      */
     public LogInAdministrator() {
         initComponents();
+         ConnectionBase connect = new ConnectionBase();
+         connect.seConnecter();
     }
 
     /**
@@ -36,6 +40,7 @@ ResultSet rs =  null ;
         pswd = new javax.swing.JPasswordField();
         submitButon = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
+        username = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -49,8 +54,14 @@ ResultSet rs =  null ;
         jLabel3.setText("Adiministrator");
         getContentPane().add(jLabel3);
         jLabel3.setBounds(250, 100, 150, 40);
+
+        pswd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pswdActionPerformed(evt);
+            }
+        });
         getContentPane().add(pswd);
-        pswd.setBounds(250, 150, 170, 30);
+        pswd.setBounds(250, 200, 170, 30);
 
         submitButon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gestiondebanque/images/images.jpg"))); // NOI18N
         submitButon.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -61,12 +72,20 @@ ResultSet rs =  null ;
             }
         });
         getContentPane().add(submitButon);
-        submitButon.setBounds(430, 150, 120, 30);
+        submitButon.setBounds(280, 250, 120, 30);
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gestiondebanque/images/Sans titre.png"))); // NOI18N
         jLabel2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         getContentPane().add(jLabel2);
         jLabel2.setBounds(20, 40, 200, 220);
+
+        username.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                usernameActionPerformed(evt);
+            }
+        });
+        getContentPane().add(username);
+        username.setBounds(250, 150, 170, 30);
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gestiondebanque/images/Sans titre1.jpg"))); // NOI18N
         getContentPane().add(jLabel1);
@@ -78,16 +97,57 @@ ResultSet rs =  null ;
 
     private void submitButonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButonActionPerformed
         // TODO add your handling code here:
-        if ( pswd.getText().equals("projet")){
-          JOptionPane.showMessageDialog(this, "on teste juste l'interface");
-        this.dispose();
+      String sql = "select login , motdepasse from identif " ;
+        Accueil acc = null;
+        try {
+            acc = new Accueil();
+        } catch (Exception ex) {
+            Logger.getLogger(LogInAdministrator.class.getName()).log(Level.SEVERE, null, ex);
         }
-        else 
-            JOptionPane.showMessageDialog(this, "Mot de passe incorrect", "ERROR", JOptionPane.ERROR_MESSAGE);
-            
+         int test = 0 ;
         
+        
+        // PreparedStatement preparedStatement;
+        try {
+           /* preparedStatement = MysqlConnection.conn.prepareStatement(sql);
+              preparedStatement.executeUpdate(); 
+              preparedStatement.close();*/
+            Statement state =  ConnectionBase.conn.createStatement() ;
+            ResultSet res = state.executeQuery(sql);
+            
+            while(res.next()){ 
+                if(res.getString(1).equals(username.getText().toString())){
+                    if (res.getString(2).equals(pswd.getText().toString())){
+                        acc.setVisible(true);
+                        test = 1 ;
+                        
+                        
+                    }
+                  
+                }
+         
+                
+                
+            }
+            
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(LogInAdministrator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
+        if(test==0){
+            JOptionPane.showMessageDialog(this, "erreur");
+        }
 
     }//GEN-LAST:event_submitButonActionPerformed
+
+    private void usernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usernameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_usernameActionPerformed
+
+    private void pswdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pswdActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_pswdActionPerformed
 
     /**
      * @param args the command line arguments
@@ -131,5 +191,6 @@ ResultSet rs =  null ;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPasswordField pswd;
     private javax.swing.JButton submitButon;
+    private javax.swing.JTextField username;
     // End of variables declaration//GEN-END:variables
 }
